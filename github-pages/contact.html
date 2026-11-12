@@ -1,0 +1,15 @@
+<form action="https://api.tryembedio.com/f/frm_your_form_key" method="POST">
+  <label for="email">Email</label>
+  <input id="email" type="email" name="email" required>
+
+  <label for="message">Message</label>
+  <textarea id="message" name="message" required></textarea>
+
+  <!-- Honeypot: hidden from people, filled in by bots -->
+  <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none">
+
+  <!-- Where to send people after a successful submit (same site) -->
+  <input type="hidden" name="_redirect" value="/thanks.html">
+
+  <button type="submit">Send</button>
+</form>

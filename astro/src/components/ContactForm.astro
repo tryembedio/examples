@@ -1,0 +1,48 @@
+---
+const endpoint = "https://api.tryembedio.com/f/frm_your_form_key";
+---
+
+<form id="contact" action={endpoint} method="POST">
+  <label for="email">Email</label>
+  <input id="email" type="email" name="email" required>
+
+  <label for="message">Message</label>
+  <textarea id="message" name="message" required></textarea>
+
+  <!-- Honeypot: hidden from people, filled in by bots -->
+  <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none">
+
+  <!-- Where to send people after a successful submit (same site) -->
+  <input type="hidden" name="_redirect" value="/thanks">
+
+  <button type="submit">Send</button>
+</form>
+
+<p id="contact-status" role="status" aria-live="polite"></p>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("#contact");
+  const status = document.querySelector("#contact-status");
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (status) status.textContent = "Sending…";
+
+    const response = await fetch(form.action, {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body: new FormData(form),
+    });
+    const body = await response.json().catch(() => ({}));
+
+    if (response.ok) {
+      form.reset();
+      if (status) status.textContent = body.message ?? "Thanks! Your message is on its way.";
+    } else if (status) {
+      status.textContent =
+        body.error === "validation_failed"
+          ? body.fields.map((f: { message: string }) => f.message).join(" ")
+          : "Something went wrong. Please try again.";
+    }
+  });
+</script>
